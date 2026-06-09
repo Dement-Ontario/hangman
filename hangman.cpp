@@ -9,17 +9,52 @@ class UI {
     private:
         string hangmanStatus[7] = 
         {
-            "None",
-            "Head",
-            "Body",
-            "Left Arm",
-            "Right Arm",
-            "Left Leg",
-            "Right Leg"
+            R"(    _____
+    |   |
+        |
+        |
+        |
+________|)",
+            R"(    _____
+    |   |
+    O   |
+        |
+        |
+________|)",
+            R"(    _____
+    |   |
+    O   |
+    |   |
+        |
+________|)",
+            R"(    _____
+    |   |
+    O   |
+   /|   |
+        |
+________|)",
+            R"(    _____
+    |   |
+    O   |
+   /|\  |
+        |
+________|)",
+            R"(    _____
+    |   |
+    O   |
+   /|\  |
+   /    |
+________|)",
+            R"(    _____
+    |   |
+    O   |
+   /|\  |
+   / \  |
+________|)",
         };
     public:
         void showInfo(const char problem[], int pLength, int livesLost, const char wrongLetters[]) {
-            cout << hangmanStatus[livesLost] << "\n\n";
+            cout << "\n\n" << hangmanStatus[livesLost] << "\n\n";
             
             if (wrongLetters[0] != ' ') {
                 cout << "Wrong Guesses: ";
@@ -107,9 +142,9 @@ class Hangman {
             
             ui.showInfo(problem, word.length(), livesLost, wrongLetters);
             if (livesLost >= 6) {
-                cout << "\nYou ran out of guesses. You lose!";
+                cout << "You ran out of guesses. You lose!";
             } else if (problemSolved()) {
-                cout << "\nYou got all the letters right. You win!";
+                cout << "You got all the letters right. You win!";
             }
 
             delete[] problem;
