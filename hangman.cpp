@@ -2,6 +2,8 @@
 #include <vector>
 #include <string>
 #include <random>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -99,14 +101,7 @@ ________|)",
 class Hangman {
     private:
         UI ui;
-        string wordsList[6] = {
-            "PICKLE",
-            "WYRMWOOD",
-            "ALABASTER",
-            "A NEWT",
-            "THE VERY MODEL OF A MODERN MAJOR GENERAL",
-            "PORTAL_LOVER_253"
-        };
+        vector<string> wordsList = {};
         string word;
     public:
         char* problem;
@@ -114,13 +109,27 @@ class Hangman {
         char wrongLetters[6] = {' ', ' ', ' ', ' ', ' ', ' '};
 
         Hangman() {
-            int wordsListLength = sizeof(wordsList) / sizeof(wordsList[0]);
-            
+            string line;
+            ifstream wordFile("wordslist.csv");
+
+            if (getline(wordFile, line)) {
+                istringstream ss(line);
+                string token;
+                
+                while (getline(ss, token, ',')) {
+                    if (wordIsValid(token)) {
+                        wordsList.push_back(token);
+                    }
+                }
+            }
+        }
+
+        void runGame() {
             random_device rd;
             mt19937 gen(rd());
-            uniform_int_distribution<> distr(0, wordsListLength - 1);
-            word = wordsList[distr(gen)];
-            // word = wordsList[0]; // Use this for testing
+            uniform_int_distribution<> distr(0, wordsList.size() - 1);
+            word = wordsList.at(distr(gen));
+            // word = wordsList.at(0); // Use this for testing
 
             problem = new char[word.length()];
 
@@ -131,9 +140,7 @@ class Hangman {
                     problem[i] = ' ';
                 }
             }
-        }
 
-        void runGame() {
             while (livesLost < 6 && !problemSolved()) {
                 ui.showInfo(problem, word.length(), livesLost, wrongLetters);
                 char guess = ui.guessLetter();
@@ -142,9 +149,9 @@ class Hangman {
             
             ui.showInfo(problem, word.length(), livesLost, wrongLetters);
             if (livesLost >= 6) {
-                cout << "You ran out of guesses. You lose!";
+                cout << "You ran out of guesses. ";
             } else if (problemSolved()) {
-                cout << "You got all the letters right. You win!";
+                cout << "You win! ";
             }
 
             delete[] problem;
@@ -170,6 +177,16 @@ class Hangman {
         bool problemSolved() {
             for (int i = 0; i < word.length(); i++) {
                 if (problem[i] != word[i]) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        bool wordIsValid(string word) {
+            for (char c : word) {
+                if (!isalpha(c) && c != ' ') {
                     return false;
                 }
             }
