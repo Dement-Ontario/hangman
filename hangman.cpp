@@ -85,16 +85,24 @@ ________|)",
             
             cout << "Guess a letter: ";
             while (guessString.length() != 1 || guessString == " ") {
-                cin >> guessString;
+                getline(cin, guessString);
 
                 if (guessString.length() == 1) {
                     guess = toupper(guessString[0]);
                 } else {
-                    cout << "\nInput too long. Guess a LETTER: ";
+                    cout << "Input too long. Guess a LETTER: ";
                 }
             }
             
             return guess;
+        }
+
+        string inputWord() {
+            // TODO: Implement inputWord
+        }
+
+        void confirmSave(bool hasSaved) {
+            // TODO: Implement confirmSave
         }
 };
 
@@ -173,6 +181,10 @@ class Hangman {
                 livesLost++;
             }
         }
+
+        void addWord() {
+            // TODO: Create addWord
+        }
         
         bool problemSolved() {
             for (int i = 0; i < word.length(); i++) {
@@ -195,10 +207,56 @@ class Hangman {
         }
 };
 
+string changeCase(string str, string strCase) {
+    if (strCase == "lower") {
+        for_each(str.begin(), str.end(), [](char& c) {
+            c = tolower(c);
+        });
+    } else if (strCase == "upper") {
+        for_each(str.begin(), str.end(), [](char& c) {
+            c = toupper(c);
+        });
+    } else {
+        cout << "String cannot change to \"" << strCase << "\". Must be \"upper\" or \"lower\".";
+    }
+    
+    return str;
+}
+
 int main()
 {
     Hangman* hangman = new Hangman();
-    hangman->runGame();
+    string choice;
+    while (choice != "exit") {
+        cout << "Play | Add Word | Exit\n";
+        cout << "What would you like to do? ";
+        getline(cin, choice);
+        choice = changeCase(choice, "lower");
+
+        if (choice == "play") {
+            string confirm = "yes";
+
+            while (confirm != "no") {
+                if (confirm == "yes") {
+                    hangman->runGame();
+                    cout << "Want to play again (yes | no)? ";
+                } else {
+                    cout << "You're silly. Yes or No? ";
+                }
+
+                getline(cin, confirm);
+                confirm = changeCase(confirm, "lower");
+            }
+
+            cout << "\n";
+        } else if (choice == "add word") {
+            cout << "\nAdding words has not been implemented yet. Sorry!\n";
+        } else if (choice == "exit") {
+            cout << "\nHave a good day!\n";
+        } else {
+            cout << "\nPlease choose between the options below.\n";
+        }
+    }
     
     delete hangman;
     return 0;
