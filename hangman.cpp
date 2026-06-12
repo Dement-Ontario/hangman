@@ -7,6 +7,8 @@
 
 using namespace std;
 
+string changeCase(string str, string strCase);
+
 class UI {
     private:
         string hangmanStatus[7] = 
@@ -98,11 +100,27 @@ ________|)",
         }
 
         string inputWord() {
-            // TODO: Implement inputWord
+            string word;
+            
+            cout << "\nAdd a word here! It can be anything, " <<
+            "as long as it only has letters, spaces, and dashes.";
+            cout << "\nIf you want to go back to the menu, enter \"back to menu\".";
+            cout << "\nEnter the word you want saved: ";
+            getline(cin, word);
+
+            return word;
         }
 
-        void confirmSave(bool hasSaved) {
-            // TODO: Implement confirmSave
+        void confirmSave(bool hasSaved, string word) {
+            switch (hasSaved)
+            {
+            case true:
+                cout << "\nSuccessfully saved " << word << ". ";
+                break;
+            case false:
+                cout << "\n" << word << " not saved. Did you use ONLY letters, spaces, and dashes?\n";
+                break;
+            }
         }
 };
 
@@ -130,9 +148,16 @@ class Hangman {
                     }
                 }
             }
+
+            wordFile.close();
         }
 
         void runGame() {
+            if (wordsList.empty()) {
+                cout << "\nNo words to play with!\n";
+                return;
+            }
+
             random_device rd;
             mt19937 gen(rd());
             uniform_int_distribution<> distr(0, wordsList.size() - 1);
@@ -183,7 +208,31 @@ class Hangman {
         }
 
         void addWord() {
-            // TODO: Create addWord
+            string word = ui.inputWord();
+            word = changeCase(word, "upper");
+
+            if (word == "BACK TO MENU") {
+                return;
+            }
+
+            bool isValid = wordIsValid(word);
+
+            ifstream checkFile("wordslist.csv");
+            bool fileIsEmpty = (checkFile.peek() == fstream::traits_type::eof());
+            checkFile.close();
+            
+            ofstream wordFile("wordslist.csv", ios::app);
+            
+            if (isValid) {
+                if (!fileIsEmpty) {
+                    wordFile << ',';
+                }
+                wordFile << word;
+                wordsList.push_back(word);
+            }
+            
+            ui.confirmSave(isValid, word);
+            wordFile.close();
         }
         
         bool problemSolved() {
@@ -250,9 +299,23 @@ int main()
 
             cout << "\n";
         } else if (choice == "add word") {
-            cout << "\nAdding words has not been implemented yet. Sorry!\n";
+            string confirm = "yes";
+
+            while (confirm != "no") {
+                if (confirm == "yes") {
+                    hangman->addWord();
+                    cout << "Want to add another word (yes | no)? ";
+                } else {
+                    cout << "You're silly. Yes or No? ";
+                }
+
+                getline(cin, confirm);
+                confirm = changeCase(confirm, "lower");
+            }
+
+            cout << "\n";
         } else if (choice == "exit") {
-            cout << "\nHave a good day!\n";
+            cout << "\nThanks for playing!\n";
         } else {
             cout << "\nPlease choose between the options below.\n";
         }
