@@ -158,6 +158,11 @@ class Hangman {
                 return;
             }
 
+            livesLost = 0;
+            for (int i = 0; i < 6; i++) {
+                wrongLetters[i] = ' ';
+            }
+
             random_device rd;
             mt19937 gen(rd());
             uniform_int_distribution<> distr(0, wordsList.size() - 1);
