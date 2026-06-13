@@ -28,5 +28,5 @@ I wrote this project in C++ with the MSVC compiler. No external libraries were u
 # Future Work
 
 - I've gotten adding a word to the CSV file working, but I didn't make anything that removed a word from the file. I'll have to do that next.
-- I figure I should move everything related to user input inside the Hangman class to the UI class at some point, for consistency's sake.
+- I figure I should move everything related to text output inside the Hangman class to the UI class at some point, for consistency's sake.
 - Using raw string literals for the hangman status makes the array very long and seems inefficient. I might want to try making one string and replacing chars inside as needed.
