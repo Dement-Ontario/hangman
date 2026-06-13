@@ -162,15 +162,15 @@ class Hangman {
             mt19937 gen(rd());
             uniform_int_distribution<> distr(0, wordsList.size() - 1);
             word = wordsList.at(distr(gen));
-            // word = wordsList.at(0); // Use this for testing
+            // word = wordsList.at(5); // Use this for testing
 
             problem = new char[word.length()];
 
             for (int i = 0; i < word.length(); i++) {
-                if (word[i] != ' ') {
-                    problem[i] = '_';
+                if (word[i] == ' ' || word[i] == '-') {
+                    problem[i] = word[i];
                 } else {
-                    problem[i] = ' ';
+                    problem[i] = '_';
                 }
             }
 
@@ -247,7 +247,7 @@ class Hangman {
 
         bool wordIsValid(string word) {
             for (char c : word) {
-                if (!isalpha(c) && c != ' ') {
+                if (!isalpha(c) && c != ' ' && c != '-') {
                     return false;
                 }
             }
@@ -281,10 +281,10 @@ int main()
         cout << "What would you like to do? ";
         getline(cin, choice);
         choice = changeCase(choice, "lower");
+        
+        string confirm = "yes";
 
         if (choice == "play") {
-            string confirm = "yes";
-
             while (confirm != "no") {
                 if (confirm == "yes") {
                     hangman->runGame();
@@ -299,8 +299,6 @@ int main()
 
             cout << "\n";
         } else if (choice == "add word") {
-            string confirm = "yes";
-
             while (confirm != "no") {
                 if (confirm == "yes") {
                     hangman->addWord();
