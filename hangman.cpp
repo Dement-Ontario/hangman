@@ -84,15 +84,17 @@ ________|)",
         char guessLetter() {
             char guess;
             string guessString;
+            bool validGuess = false;
             
             cout << "Guess a letter: ";
-            while (guessString.length() != 1 || guessString == " ") {
+            while (!validGuess) {
                 getline(cin, guessString);
 
-                if (guessString.length() == 1) {
+                if (guessString.length() == 1 && isalpha(guessString[0])) {
                     guess = toupper(guessString[0]);
+                    validGuess = true;
                 } else {
-                    cout << "Input too long. Guess a LETTER: ";
+                    cout << "Input must be a single letter. Guess again: ";
                 }
             }
             
@@ -152,10 +154,10 @@ class Hangman {
             wordFile.close();
         }
 
-        void runGame() {
+        bool runGame() {
             if (wordsList.empty()) {
                 cout << "\nNo words to play with!\n";
-                return;
+                return false;
             }
 
             livesLost = 0;
@@ -193,6 +195,7 @@ class Hangman {
             }
 
             delete[] problem;
+            return true;
         }
 
         void checkLetter(char letter) {
@@ -212,12 +215,12 @@ class Hangman {
             }
         }
 
-        void addWord() {
+        bool addWord() {
             string word = ui.inputWord();
             word = changeCase(word, "upper");
 
             if (word == "BACK TO MENU") {
-                return;
+                return false;
             }
 
             bool isValid = wordIsValid(word);
@@ -238,6 +241,7 @@ class Hangman {
             
             ui.confirmSave(isValid, word);
             wordFile.close();
+            return true;
         }
         
         bool problemSolved() {
@@ -288,11 +292,17 @@ int main()
         choice = changeCase(choice, "lower");
         
         string confirm = "yes";
+        bool sustainLoop = true;
 
         if (choice == "play") {
             while (confirm != "no") {
                 if (confirm == "yes") {
-                    hangman->runGame();
+                    sustainLoop = hangman->runGame();
+                    
+                    if (!sustainLoop) {
+                        break;
+                    }
+                    
                     cout << "Want to play again (yes | no)? ";
                 } else {
                     cout << "You're silly. Yes or No? ";
@@ -306,7 +316,12 @@ int main()
         } else if (choice == "add word") {
             while (confirm != "no") {
                 if (confirm == "yes") {
-                    hangman->addWord();
+                    sustainLoop = hangman->addWord();
+                    
+                    if (!sustainLoop) {
+                        break;
+                    }
+                    
                     cout << "Want to add another word (yes | no)? ";
                 } else {
                     cout << "You're silly. Yes or No? ";
